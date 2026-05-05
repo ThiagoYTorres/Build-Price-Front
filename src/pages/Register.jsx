@@ -1,12 +1,5 @@
 import React from 'react'
-import { Button } from './components/ui/button'
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
-} from "@/components/ui/carousel"
+import { Button } from '../components/ui/button'
 import {
   Card,
   CardAction,
@@ -18,15 +11,15 @@ import {
 } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Field, FieldDescription, FieldLabel } from "@/components/ui/field"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { AlertCircleIcon } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { useNavigate } from 'react-router-dom'
+import { cadastrarUser } from '@/services/api'
 
 function Teste() {
   const navigate = useNavigate()
-    const [alert,setAlert] = React.useState(false)
+    const [alert, setAlert] = React.useState(false)
     const [response, setResponse] = React.useState("")
     const [userCreated,setUserCreated] = React.useState(null)
 
@@ -40,29 +33,19 @@ function Teste() {
       setAlert(false)
 
       try{
-        const response = await fetch('http://localhost:8080/api/v1/auth/register',{
-          method: 'POST',
-          headers: {
-          "Content-Type": "application/json",
-        },
-          body: JSON.stringify(user)
-        }) 
-        if(response.ok) {
-          setAlert(true)
-          setResponse("Usuário Cadastrado")
-          setUserCreated(true)
-          setTimeout( () => navigate("/login"), 2000 )
-      } 
-      else {
-        const errorData = await response.json()
-        console.error("Erro no cadastro:", errorData)
+        await cadastrarUser(user)
         setAlert(true)
-        setResponse(errorData.message)
-        setUserCreated(false)
+        setResponse("Usuário Cadastrado")
+        setUserCreated(true)
+        setTimeout( () => navigate("/login"), 2000 )
        
-      }}
+      }
       catch(error){
         console.log(error)
+        console.error("Erro no cadastro:", error.message)
+        setAlert(true)
+        setResponse(error.message)
+        setUserCreated(false)
       }
     }
 

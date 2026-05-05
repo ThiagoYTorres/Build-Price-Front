@@ -1,8 +1,9 @@
 import './index.css'
-import Teste from './Register'
-import Login from './Login'
+import Teste from './pages/Register'
+import Login from './pages/Login'
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import React from 'react'
+import Projects from './pages/Projects';
 
 function App() {
   return (
@@ -11,6 +12,7 @@ function App() {
         <Routes>
           <Route path='/login' element={<Login/>}/>
           <Route path='/register' element={<Teste/>}/>
+          <Route path='/projects' element={<Projects/>}/>
 
           <Route path="/" element={<Teste />} />
         </Routes>

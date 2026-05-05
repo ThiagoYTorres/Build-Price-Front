@@ -1,5 +1,5 @@
 import React from 'react'
-import { Button } from './components/ui/button'
+import { Button } from '../components/ui/button'
 import {
   Card,
   CardAction,
@@ -20,11 +20,13 @@ import {
 } from "@/components/ui/alert"
 import { AlertCircleIcon } from "lucide-react"
 import { CheckCircle2Icon } from "lucide-react"
-
 import { cn } from "@/lib/utils"
+import { loginUser } from '@/services/api'
+
 function Teste() {
     const [logado,setLogado] = React.useState(null)
     const [alert,setAlert] = React.useState(false)
+    const [errorMsg, setErrorMsg] = React.useState(false)
     const [token, setToken] =  React.useState('')
 
     React.useEffect( () => {
@@ -36,35 +38,23 @@ function Teste() {
 
     async function login(formData){
       const user = {
-        email:formData.get('email'),
-        password:formData.get('password'),
+        email: formData.get('email'),
+        password: formData.get('password'),
 
       }
 
       try{
-         const response = await fetch('http://localhost:8080/api/v1/auth/login',{
-          method:"POST",
-          headers: {
-          "Content-Type": "application/json",
-        },
-          body: JSON.stringify(user)
-         })
-
-         if(response.ok){
-          setAlert(true)
-          setLogado(true)
-        }
-        else{
-           setAlert(true)
-           const tokenData = await response.json()
-           setToken(tokenData.message)
-          console.log(tokenData)
-          console.log('Erro no login')
-          setLogado(false)
-         }
+        setToken(await loginUser(user))
+        localStorage.setItem('token', token )
+        setAlert(true)
+        setLogado(true)
       }
       catch(error){
         console.error(error)
+        setAlert(true)
+        setErrorMsg(error.message)
+        console.log('Erro no login')
+        setLogado(false)
       }
     }
 
@@ -131,10 +121,10 @@ function Teste() {
 
           </div>
       <AlertDescription className="max-w-full text-white rounded-4xl ">
-        {logado ? null : token}
+        {logado ? null : errorMsg}
       </AlertDescription>
-    </Alert>
-: null}
+    </Alert> : null
+    }
     </div>
   
   )
