@@ -22,12 +22,15 @@ import { AlertCircleIcon } from "lucide-react"
 import { CheckCircle2Icon } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { loginUser } from '@/services/api'
+import { useNavigate } from 'react-router-dom'
 
 function Teste() {
     const [logado,setLogado] = React.useState(null)
     const [alert,setAlert] = React.useState(false)
     const [errorMsg, setErrorMsg] = React.useState(false)
     const [token, setToken] =  React.useState('')
+
+    const navigate = useNavigate()
 
     React.useEffect( () => {
       if(alert){
@@ -44,10 +47,12 @@ function Teste() {
       }
 
       try{
-        setToken(await loginUser(user))
+        const token = await loginUser(user)
+        setToken(token)
         localStorage.setItem('token', token )
         setAlert(true)
         setLogado(true)
+        setTimeout( () => navigate("/projects"), 2000 )
       }
       catch(error){
         console.error(error)

@@ -39,6 +39,7 @@ export async function getProjects(token){
          headers: { Authorization: `Bearer ${token}` }
     })
     if(!response.ok){
+        
         throw new Error("Erro ao buscar projetos")
     } 
 
@@ -48,9 +49,13 @@ export async function getProjects(token){
 export async function createProject(token, projectData){
     const resp = await fetch(`${BASE_URL}/project`, {
         method: 'POST',
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
         body: JSON.stringify(projectData)
     })
-
+    if(!resp.ok){
+        const erro = await resp.json()
+        console.log(erro)
+        throw new Error("Erro ao criar projeto")
+    }
     return resp.json()
 }
