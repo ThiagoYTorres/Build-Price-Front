@@ -34,16 +34,32 @@ export async function loginUser(credentials){
     return data.token
 }
 
+// Projetos 
 export async function getProjects(token){  
     const resp = await fetch(`${BASE_URL}/project`, {
          headers: { Authorization: `Bearer ${token}` }
     })
-    if(!response.ok){
-        
+    if(!resp.ok){
         throw new Error("Erro ao buscar projetos")
     } 
 
   return resp.json()
+}
+
+// Cadastrar Cliente
+export async function createClient(token, clientData){
+    const resp = await fetch(`${BASE_URL}/clients`, {
+        method: 'POST',
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+        body: JSON.stringify(clientData)
+    })
+    if(!resp.ok){
+        const erro = await resp.json()
+        console.log(erro)
+        throw new Error("Erro ao criar cliente")
+    }
+    const clientId = await resp.json()
+    return clientId.id
 }
 
 export async function createProject(token, projectData){
@@ -58,4 +74,15 @@ export async function createProject(token, projectData){
         throw new Error("Erro ao criar projeto")
     }
     return resp.json()
+}
+
+
+export async function deleteProject(token, projectId) {
+  const resp = await fetch(`${BASE_URL}/project/${projectId}`, {
+    method: 'DELETE',
+    headers: {
+      'Authorization': `Bearer ${token}`
+    }
+  })
+  return resp
 }
