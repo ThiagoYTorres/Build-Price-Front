@@ -47,6 +47,7 @@ import {
 import { Skeleton } from "@/components/ui/skeleton"
 import StepClientes from './Project-Form/StepClientes'
 import StepProjeto from './Project-Form/StepProjeto'
+import StepBudget from './Project-Form/StepBudget'
 
 export default function Projects() {
   const token = localStorage.getItem('token')
@@ -59,18 +60,34 @@ export default function Projects() {
   const [step, setSteps] = useState(1)
   // Form
   const [formData, setFormData] = useState({
-    clienteId: null,
-    projetoId: null,
+    clientId: null,
+    projectId: null,
     budgetId: null,
   })
 
 // Passa essa função para a pagina do form de cadastro de cliente, fazendo a req, recebendo o id do
 // cliente e passando para o objeto, possibilitando a próxima página acessar esse dado
   function getClientId(clientId){
-    setFormData(prev => ({...prev, clientId:clientId}))
+    setFormData(prev => ({...prev, clientId: clientId}))
     setSteps(2)
   }
 
+  function getProjectId(projectId){
+    setFormData( prev => ({...prev, projectId: projectId}))
+    setSteps(3)
+  }
+
+  function getBudgetId(budgetId){
+    setFormData( prev => ({...prev, budgetId: budgetId}))
+    setSteps(3)
+  }
+
+
+
+
+
+
+  console.log(formData)
   async function getProjectData(formData){
     const project = {
       nameWork: formData.get("nomeObra"),
@@ -136,24 +153,27 @@ export default function Projects() {
 
   return (
     <>
-    <main className='p-5'>
+    <main className=''>
        
-    <h1 className='text-4xl'>Projetos</h1>
-        <Dialog open={open} onOpenChange={setOpen}>
+        <Dialog open={open} onOpenChange={setOpen} >
+          <div className='flex justify-between shadow-md pb-5 w-sc items-center px-4 pt-5 '>
+             <h1 className='text-2xl mb-1 '>PROJETOS</h1>
       <DialogTrigger
       onClick={() => setOpen(true)}
-       className='px-3 py-1 bg-gray-950 rounded-lg text-white cursor-pointer'> {/* Botão para abrir o modal */}
+       className='px-3 py-1 bg-gray-950 rounded-lg text-white cursor-pointer text-sm'> {/* Botão para abrir o modal */}
         + Projeto
       </DialogTrigger>
+          </div>
+   
       <DialogContent className='py-10 px-5 sm:max-w-2xl'>
         
 
       {/* Conteúdo do form ( inputs ) */}
-        <form action={getProjectData}>
             
-              { step === 1 && <StepClientes setSteps={setSteps} nextS={getClientId} /> }
-              { step === 2 && <StepProjeto setSteps={setSteps} clientId={formData.clienteId} /> }
-        </form>
+              { step === 1 && <StepClientes  nextS={getClientId} /> }
+              { step === 2 && <StepProjeto   nextS={getProjectId} clientId={formData.clientId}  /> }
+              { step === 3 && <StepBudget    nextS={getBudgetId} projectId={formData.projectId} /> }
+              
       </DialogContent>
     </Dialog>
 

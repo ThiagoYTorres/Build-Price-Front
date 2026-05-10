@@ -63,17 +63,13 @@ function Teste() {
       }
     }
 
-    console.log(token)
-
-
   return (
     <div className='flex justify-center items-center h-screen flex-col'>
-
     <Card className="w-full max-w-sm p-3 ">
         <form action={login}>
       <CardHeader>
         <CardTitle className="text-center text-xl font-bold pt-10">Build Price</CardTitle>
-        <CardDescription className="text-center  mb-7">
+        <CardDescription className="text-center mb-7">
           Enter your email below to login to your account
         </CardDescription>
         <CardAction>

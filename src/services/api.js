@@ -59,6 +59,7 @@ export async function createClient(token, clientData){
         throw new Error("Erro ao criar cliente")
     }
     const clientId = await resp.json()
+    console.log(clientId)
     return clientId.id
 }
 
@@ -73,7 +74,25 @@ export async function createProject(token, projectData){
         console.log(erro)
         throw new Error("Erro ao criar projeto")
     }
-    return resp.json()
+    const project = await resp.json()
+    console.log(project)
+    return project.id
+}
+
+export async function createBudget(token, budgetData){
+    const resp = await fetch(`${BASE_URL}/budgets`, {
+        method: 'POST',
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+        body: JSON.stringify(budgetData)
+    })
+    if(!resp.ok){
+        const erro = await resp.json()
+        console.log(erro)
+        throw new Error("Erro ao criar projeto")
+    }
+    const budget = await resp.json()
+    console.log(budget)
+    return budget.id
 }
 
 

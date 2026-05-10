@@ -17,8 +17,9 @@ import { Input } from "@/components/ui/input"
 import { Button } from '@/components/ui/button'
 import { createClient } from '@/services/api'
 
-export default function StepClientes({setSteps, nextS}) {
-    
+export default function StepClientes({nextS}) {
+const token = localStorage.getItem('token')
+
         async function getClientData(formData){
              const cliente = {
                 name: formData.get("name"),
@@ -27,7 +28,8 @@ export default function StepClientes({setSteps, nextS}) {
                 email: formData.get("email")
                 }
         try{
-            const clientId = await createClient(cliente)
+            const clientId = await createClient(token, cliente)
+            console.log(clientId)
             nextS(clientId)
         } catch(error) {
             console.log(error)
@@ -42,7 +44,7 @@ export default function StepClientes({setSteps, nextS}) {
                     Preencha todos os campos para cadastrar um cliente.
                 </DialogDescription>
         </DialogHeader>
-    <form>
+    <form action={getClientData}> 
     <FieldGroup className='grid grid-cols-1'>
         <Field>
             <FieldLabel htmlFor="fieldgroup-name">Nome</FieldLabel>
@@ -68,15 +70,14 @@ export default function StepClientes({setSteps, nextS}) {
             name="email"
             />
             <FieldDescription>
-            We&apos;ll send updates to this address.
+                We&apos;ll send updates to this address.
             </FieldDescription>
         </Field>
 
         
 
         <Field orientation="horizontal" className='col-span-full flex justify-center'>
-            <Button type="submit" className='cursor-pointer' >Criar Projeto</Button>
-            <Button type="submit" className='cursor-pointer' onClick={() => setSteps(2)} >Próximo</Button>
+            <Button type="submit" className='cursor-pointer'>Cadastrar</Button>
         </Field>
       </FieldGroup>
       </form>

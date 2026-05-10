@@ -15,7 +15,26 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
-export default function StepProjeto() {
+import { createProject } from '@/services/api'
+export default function StepProjeto({clientId, nextS}) {
+  const token = localStorage.getItem('token')
+  console.log(clientId)
+          async function getProjectData(formData){
+               const projeto = {
+                  nameWork: formData.get("nomeObra"),
+                  description: formData.get("desc"),
+                  uf: formData.get("uf"),
+                  clientId: clientId,
+                  }
+          try{
+              const projetoId = await createProject(token, projeto)
+              console.log(projetoId)
+              nextS(projetoId)
+          } catch(error) {
+              console.log(error)
+          }
+      }
+
   return (
     <>
             <DialogHeader>
@@ -24,23 +43,11 @@ export default function StepProjeto() {
                 Preencha todos os campos para criar um projeto.
               </DialogDescription>
             </DialogHeader>
+            <form action={getProjectData}>
             <FieldGroup className='grid grid-cols-2'>
     <Field>
         <FieldLabel htmlFor="fieldgroup-name">Nome da Obra</FieldLabel>
         <Input id="fieldgroup-name" placeholder="Reforma Apartamento" name="nomeObra" required/>
-      </Field>
-
-       <Field>
-        <FieldLabel htmlFor="fieldgroup-name">Nome do Cliente</FieldLabel>
-        <Input id="fieldgroup-name" placeholder="Jordan Lee" name="nomeCli" />
-      </Field>
-
-       <Field className='col-span-full'>
-        <FieldLabel htmlFor="fieldgroup-name" >Descrição</FieldLabel>
-        <Input id="fieldgroup-name" placeholder="Troca de pisos" name="desc" />
-        <FieldDescription>
-          Faça uma breve descrição do projeto.
-        </FieldDescription>
       </Field>
 
       <Field>
@@ -52,26 +59,27 @@ export default function StepProjeto() {
           name="uf"
           defaultValue="SP"
         />
+        
+      </Field>
+
+       <Field className='col-span-full'>
+        <FieldLabel htmlFor="fieldgroup-name" >Descrição</FieldLabel>
+        <Input id="fieldgroup-name" placeholder="Troca de pisos" name="desc" />
         <FieldDescription>
-          We&apos;ll send updates to this address.
+          Faça uma breve descrição do projeto.
         </FieldDescription>
       </Field>
 
-      <Field>
-        <FieldLabel htmlFor="fieldgroup-email">BDI</FieldLabel>
-        <Input
-          id="fieldgroup-email"
-          type="number"
-          placeholder="25.5"
-          name="bdi"
-        />
-      </Field>
+      
+
+      
 
       <Field orientation="horizontal" className='col-span-full flex justify-center'>
         <Button type="submit" className='cursor-pointer' >Criar Projeto</Button>
         
       </Field>
       </FieldGroup>
+      </form>
     </>
   )
 }
