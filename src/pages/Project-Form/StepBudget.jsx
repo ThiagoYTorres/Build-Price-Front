@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import {
   Field,
   FieldDescription,
@@ -16,8 +16,12 @@ import {
 import { Input } from "@/components/ui/input"
 import { Button } from '@/components/ui/button'
 import { createBudget } from '@/services/api'
+import { useNavigate } from 'react-router-dom'
 
 export default function StepBudget({projectId, nextS}) {
+    const navigate = useNavigate()
+    const [budgetID, setBudgetID] = useState('')
+
     const token = localStorage.getItem('token')
         async function getBudgetData(formData){
              const budget = {
@@ -27,8 +31,9 @@ export default function StepBudget({projectId, nextS}) {
                 }
                 console.log(budget)
         try{
-            const budgetId = await createBudget(token, budget)
-            nextS(budgetId)
+            const getBudgetId = await createBudget(token, budget)
+            setBudgetID(getBudgetId)
+            setTimeout( () => navigate("/budget"), 2000 )
         } catch(error) {
             console.log(error)
         }
@@ -37,35 +42,30 @@ export default function StepBudget({projectId, nextS}) {
   return (
     <>
         <DialogHeader>
-            <DialogTitle className='text-center text-2xl'>Orçamento</DialogTitle>
+            <DialogTitle className='text-center text-2xl'>Dados Orçamento</DialogTitle>
                 <DialogDescription  className='text-center mb-6'>
                     Preencha todos os campos para fazer um orçamento.
                 </DialogDescription>
         </DialogHeader>
     <form action={getBudgetData}>
-    <FieldGroup className='grid grid-cols-2'>
-        <Field>
-            <FieldLabel htmlFor="fieldgroup-name">Nome</FieldLabel>
-            <Input id="fieldgroup-name" placeholder="Orçamento Principal" name="name" required/>
-        </Field>
+        <FieldGroup className='grid grid-cols-2'>
+            <Field>
+                <FieldLabel htmlFor="fieldgroup-name">Nome</FieldLabel>
+                <Input id="fieldgroup-name" placeholder="Orçamento Principal" name="name" required/>
+            </Field>
 
-        <Field>
-            <FieldLabel htmlFor="fieldgroup-name">BDI</FieldLabel>
-            <Input id="fieldgroup-name" placeholder="25.5" name="bdi" type='number' />
-            <FieldDescription>
-                We&apos;ll send updates to this address.
-            </FieldDescription>
-        </Field>
+            <Field>
+                <FieldLabel htmlFor="fieldgroup-name">BDI</FieldLabel>
+                <Input id="fieldgroup-name" placeholder="25.5" name="bdi" type='number' />
+                <FieldDescription>
+                    We&apos;ll send updates to this address.
+                </FieldDescription>
+            </Field>
 
-        
-
-        
-        
-
-        <Field orientation="horizontal" className='col-span-full flex justify-center'>
-            <Button type="submit" className='cursor-pointer'>Criar Projeto</Button>
-        </Field>
-      </FieldGroup>
+            <Field orientation="horizontal" className='col-span-full flex justify-center'>
+                <Button type="submit" className='cursor-pointer'>Ir para orçamento</Button>
+            </Field>
+        </FieldGroup>
       </form>
       </>
   )

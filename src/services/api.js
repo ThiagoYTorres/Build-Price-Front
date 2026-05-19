@@ -95,6 +95,19 @@ export async function createBudget(token, budgetData){
     return budget.id
 }
 
+export async function getBudgets(token, budgetId){
+    const resp = await fetch(`${BASE_URL}/budgets/${budgetId}`, {
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+    })
+    if(!resp.ok){
+        const erro = await resp.json()
+        console.log(erro)
+        throw new Error("Erro ao criar projeto")
+    }
+    const budget = await resp.json()
+    return budget
+}
+
 
 export async function deleteProject(token, projectId) {
   const resp = await fetch(`${BASE_URL}/project/${projectId}`, {
@@ -104,4 +117,19 @@ export async function deleteProject(token, projectId) {
     }
   })
   return resp
+}
+
+//Listar Itens
+export async function getSinapiItens(token, paramsObj){
+    const params = new URLSearchParams(paramsObj)
+    const resp = await fetch(`${BASE_URL}/sinapi/items?uf=SP`, {
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+    })
+    if(!resp.ok){
+        const erro = await resp.json()
+        console.log(erro)
+        throw new Error("Erro ao carregar itens")
+    }
+    const itens = await resp.json()
+    return itens
 }

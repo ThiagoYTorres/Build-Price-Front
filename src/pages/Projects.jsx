@@ -24,11 +24,13 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
+  DialogFooter,
+  DialogClose,
   DialogTrigger,
 } from "@/components/ui/dialog"
 
 import { Input } from "@/components/ui/input"
-import { createProject, deleteProject, getProjects } from '@/services/api'
+import { createProject, deleteProject, getBudgets, getProjects } from '@/services/api'
 import {
   Card,
   CardAction,
@@ -45,6 +47,7 @@ import {
   AlertTitle,
 } from "@/components/ui/alert"
 import { Skeleton } from "@/components/ui/skeleton"
+import { Label } from '@/components/ui/label'
 import StepClientes from './Project-Form/StepClientes'
 import StepProjeto from './Project-Form/StepProjeto'
 import StepBudget from './Project-Form/StepBudget'
@@ -52,6 +55,7 @@ import StepBudget from './Project-Form/StepBudget'
 export default function Projects() {
   const token = localStorage.getItem('token')
   const [projetos, setProjetos] = useState([])
+  const [budgets, setBudgets] = useState([])
   const [alert, setAlert] = useState(false)
   const [open, setOpen ] = useState(false)
   // Loading State
@@ -82,10 +86,13 @@ export default function Projects() {
     setSteps(3)
   }
 
+  async function showBudgets(token, budgetId){
+    const resp = await getBudgets(token, budgetId)
+    setBudgets([resp])
+  }
 
 
-
-
+ console.log(budgets)
 
   console.log(formData)
   async function getProjectData(formData){
@@ -172,7 +179,7 @@ export default function Projects() {
             
               { step === 1 && <StepClientes  nextS={getClientId} /> }
               { step === 2 && <StepProjeto   nextS={getProjectId} clientId={formData.clientId}  /> }
-              { step === 3 && <StepBudget    nextS={getBudgetId} projectId={formData.projectId} /> }
+              { step === 3 && <StepBudget    nextS={getBudgetId} /> }
               
       </DialogContent>
     </Dialog>
@@ -213,23 +220,42 @@ export default function Projects() {
         </CardDescription>
       </CardHeader>
       <CardFooter className='flex justify-between'>
-        <Button className="w-60">Fazer Orçamento</Button>
-                            <Dialog>
-                      <DialogTrigger>
-                        <Trash2Icon size={20}  stroke='red' className='cursor-pointer' />
-                      </DialogTrigger>
-                      <DialogContent>
-                        <DialogHeader>
-                          <DialogTitle className='text-center'>Apagar Projeto?</DialogTitle>
-                          <DialogDescription className='text-center'>
-                            Essa ação não pode ser desfeita, todos os dados desse projeto serão apagados.
-                          </DialogDescription>
-                        </DialogHeader>
-                          <Button
-                            onClick={() => delProject(token, el.id)}
-                            variant='destructive' className='cursor-pointer'>Apagar</Button>
-                      </DialogContent>
-                    </Dialog>
+      {/* Página visualizar os orçamentos do projeto */}
+        <Dialog>
+      <form>
+        <DialogTrigger asChild>
+          <Button variant="outline" onClick={() => showBudgets(token, el.budgetIds[0])}>Ver orçamentos</Button>
+        </DialogTrigger>
+        <DialogContent className="sm:max-w-lg">
+          <StepBudget projectId={el.id}/>
+
+
+
+          <DialogFooter>
+            <DialogClose asChild>
+              <Button variant="outline">Fechar</Button>
+            </DialogClose>
+          </DialogFooter>
+        </DialogContent>
+      </form>
+    </Dialog>
+        {/* Abre o modal */}
+          <Dialog>
+          <DialogTrigger>
+            <Trash2Icon size={20}  stroke='red' className='cursor-pointer' />
+          </DialogTrigger>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle className='text-center'>Apagar Projeto?</DialogTitle>
+              <DialogDescription className='text-center'>
+                Essa ação não pode ser desfeita, todos os dados desse projeto serão apagados.
+              </DialogDescription>
+            </DialogHeader>
+              <Button
+                onClick={() => delProject(token, el.id)}
+                variant='destructive' className='cursor-pointer'>Apagar</Button>
+          </DialogContent>
+        </Dialog>
 
       </CardFooter>
     </Card>
