@@ -120,9 +120,10 @@ export async function deleteProject(token, projectId) {
 }
 
 //Listar Itens
-export async function getSinapiItens(token, paramsObj){
-    const params = new URLSearchParams(paramsObj)
-    const resp = await fetch(`${BASE_URL}/sinapi/items?uf=SP`, {
+export async function getSinapiItens(token,page,item){
+    const params = new URLSearchParams()
+    console.log(`${BASE_URL}/sinapi/items?uf=SP&page=${page}&search=${item}`)
+    const resp = await fetch(`${BASE_URL}/sinapi/items?uf=SP&page=${page}&search=${item}`, {
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
     })
     if(!resp.ok){

@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import {
   Field,
   FieldDescription,
@@ -15,14 +15,28 @@ import {
 } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Button } from '@/components/ui/button'
-import { createBudget } from '@/services/api'
+import { createBudget, getProjects } from '@/services/api'
 import { useNavigate } from 'react-router-dom'
 
 export default function StepBudget({projectId, nextS}) {
     const navigate = useNavigate()
     const [budgetID, setBudgetID] = useState('')
+    const [projectBudgets,setProjectBudgets] = useState([])
 
+    useEffect(() => {
+        async function loadBudgets(){
+            const budgets = await getProjects(token)
+            const findProject = budgets.find( el => el.id === projectId)
+            console.log(findProject)
+            setProjectBudgets([findProject.budgetIds])
+        }
+
+        loadBudgets()
+        console.log(projectBudgets)
+    },[])
+    
     const token = localStorage.getItem('token')
+
         async function getBudgetData(formData){
              const budget = {
                     name: formData.get("name"),
@@ -33,7 +47,7 @@ export default function StepBudget({projectId, nextS}) {
         try{
             const getBudgetId = await createBudget(token, budget)
             setBudgetID(getBudgetId)
-            setTimeout( () => navigate("/budget"), 2000 )
+            
         } catch(error) {
             console.log(error)
         }
@@ -42,7 +56,24 @@ export default function StepBudget({projectId, nextS}) {
   return (
     <>
         <DialogHeader>
-            <DialogTitle className='text-center text-2xl'>Dados Orçamento</DialogTitle>
+            <DialogTitle className='text-center text-2xl'>Orçamentos</DialogTitle>
+                <DialogDescription  className='text-center mb-6'>
+                    Orçamentos do projeto
+                </DialogDescription>
+        </DialogHeader>
+        <div>
+           {projectBudgets.length > 0 ? 
+           <div className='flex items-center justify-around'>
+                {projectBudgets}
+                <Button className='cursor-pointer' onClick={() => setTimeout( () => navigate("/budget"), 2000 )}>Selecionar</Button>
+           </div>
+           : 
+            <DialogDescription  className='text-center mb-6'>
+                Você ainda não tem orçamentos para esse projeto.
+            </DialogDescription>} 
+        </div>
+        {/* <DialogHeader>
+            <DialogTitle className='text-center text-2xl'>Orçamentos</DialogTitle>
                 <DialogDescription  className='text-center mb-6'>
                     Preencha todos os campos para fazer um orçamento.
                 </DialogDescription>
@@ -66,7 +97,7 @@ export default function StepBudget({projectId, nextS}) {
                 <Button type="submit" className='cursor-pointer'>Ir para orçamento</Button>
             </Field>
         </FieldGroup>
-      </form>
+      </form> */}
       </>
   )
 }

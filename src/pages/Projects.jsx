@@ -227,9 +227,9 @@ export default function Projects() {
           <Button variant="outline" onClick={() => showBudgets(token, el.budgetIds[0])}>Ver orçamentos</Button>
         </DialogTrigger>
         <DialogContent className="sm:max-w-lg">
-          <StepBudget projectId={el.id}/>
 
-
+      {/* Form para criar orçamento */}
+          <StepBudget projectId={el.id} />
 
           <DialogFooter>
             <DialogClose asChild>
