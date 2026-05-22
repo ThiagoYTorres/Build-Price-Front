@@ -11,7 +11,9 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
+  DialogFooter,
   DialogTrigger,
+  DialogClose,
 } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Button } from '@/components/ui/button'
@@ -26,9 +28,13 @@ export default function StepBudget({projectId, nextS}) {
     useEffect(() => {
         async function loadBudgets(){
             const budgets = await getProjects(token)
+            // Procura pelo projeto através do ID
             const findProject = budgets.find( el => el.id === projectId)
+            // Verifica se o array de budgets está vazio
+            if(findProject.budgetIds.length > 0){
+                setProjectBudgets([findProject.budgetIds])
+            }
             console.log(findProject)
-            setProjectBudgets([findProject.budgetIds])
         }
 
         loadBudgets()
@@ -65,12 +71,47 @@ export default function StepBudget({projectId, nextS}) {
            {projectBudgets.length > 0 ? 
            <div className='flex items-center justify-around'>
                 {projectBudgets}
-                <Button className='cursor-pointer' onClick={() => setTimeout( () => navigate("/budget"), 2000 )}>Selecionar</Button>
+                <Button className='cursor-pointer' onClick={() => setTimeout( () => navigate("/budget"), 2000 )}>
+                    Selecionar</Button>
            </div>
-           : 
-            <DialogDescription  className='text-center mb-6'>
+           : <>
+           <p  className='text-center mb-6 text-gray-500'>
                 Você ainda não tem orçamentos para esse projeto.
-            </DialogDescription>} 
+            </p>
+              <Dialog>
+          <DialogTrigger asChild>
+            <Button >Criar orçamento</Button>
+          </DialogTrigger>
+          <DialogContent className="sm:max-w-lg py-10 px-10">
+            <DialogTitle className='text-center text-xl'>Dados do Orçamento</DialogTitle>
+            <DialogDescription className='text-center'>
+                Preencha os campos para criar um orçamento.
+            </DialogDescription>
+            <form action={getBudgetData}>
+        <FieldGroup className='grid grid-cols-2'>
+            <Field>
+                <FieldLabel htmlFor="fieldgroup-name">Nome</FieldLabel>
+                <Input id="fieldgroup-name" placeholder="Orçamento Principal" name="name" required/>
+            </Field>
+
+            <Field>
+                <FieldLabel htmlFor="fieldgroup-name">BDI</FieldLabel>
+                <Input id="fieldgroup-name" placeholder="25.5" name="bdi" type='number' />
+                <FieldDescription>
+                </FieldDescription>
+            </Field>
+
+            <Field orientation="horizontal" className='col-span-full flex justify-center'>
+                <Button type="submit" className='cursor-pointer'>Fazer Orçamento</Button>
+            </Field>
+        </FieldGroup>
+            </form>
+
+            
+          </DialogContent>
+
+      </Dialog>
+             </> } 
         </div>
         {/* <DialogHeader>
             <DialogTitle className='text-center text-2xl'>Orçamentos</DialogTitle>

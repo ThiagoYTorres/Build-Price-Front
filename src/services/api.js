@@ -78,7 +78,7 @@ export async function createProject(token, projectData){
     console.log(project)
     return project.id
 }
-
+// Budget
 export async function createBudget(token, budgetData){
     const resp = await fetch(`${BASE_URL}/budgets`, {
         method: 'POST',
@@ -108,7 +108,23 @@ export async function getBudgets(token, budgetId){
     return budget
 }
 
+export async function getBudgetData(token, budgetId){
+    const resp = await fetch(`${BASE_URL}/budgets/${budgetId}`, {
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+    })
+    
+    if(!resp.ok){
+        const erro = await resp.json()
+        console.log(erro)
+        throw new Error("Erro ao buscar dados do orçamento")
+    }
+    const budget = await resp.json()
+    console.log(budget)
+}
 
+
+
+// Deletar projeto
 export async function deleteProject(token, projectId) {
   const resp = await fetch(`${BASE_URL}/project/${projectId}`, {
     method: 'DELETE',
@@ -120,10 +136,11 @@ export async function deleteProject(token, projectId) {
 }
 
 //Listar Itens
-export async function getSinapiItens(token,page,item){
-    const params = new URLSearchParams()
-    console.log(`${BASE_URL}/sinapi/items?uf=SP&page=${page}&search=${item}`)
-    const resp = await fetch(`${BASE_URL}/sinapi/items?uf=SP&page=${page}&search=${item}`, {
+export async function getSinapiItens(token,page,filters){
+    const params = new URLSearchParams(filters)
+    console.log(`${BASE_URL}/sinapi/items?${page}&${params}`)
+
+    const resp = await fetch(`${BASE_URL}/sinapi/items?page=${page}&${params}`, {
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
     })
     if(!resp.ok){

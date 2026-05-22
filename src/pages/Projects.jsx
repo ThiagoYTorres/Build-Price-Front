@@ -160,7 +160,7 @@ export default function Projects() {
 
   return (
     <>
-    <main className=''>
+    <main className='mx-2'>
        
         <Dialog open={open} onOpenChange={setOpen} >
           <div className='flex justify-between shadow-md pb-5 w-sc items-center px-4 pt-5 '>
@@ -179,7 +179,7 @@ export default function Projects() {
             
               { step === 1 && <StepClientes  nextS={getClientId} /> }
               { step === 2 && <StepProjeto   nextS={getProjectId} clientId={formData.clientId}  /> }
-              { step === 3 && <StepBudget    nextS={getBudgetId} /> }
+              {/* { step === 3 && <StepBudget    nextS={getBudgetId} /> } */}
               
       </DialogContent>
     </Dialog>
@@ -199,8 +199,8 @@ export default function Projects() {
         <Skeleton className="aspect-video w-full" />
       </CardContent>
     </Card> 
-      )) : projetos.length > 0 ? projetos.map( el => (
-        <Card key={el.id} className="relative mx-auto w-full max-w-sm pt-0">
+      )) : projetos.length > 0 ? projetos.map( el => ( 
+        <Card key={el.id} className="relative mx-auto w-full max-w-sm pt-0 mb-4">
       <div className="absolute inset-0 z-30 aspect-video bg-black/35" />
       <img
         src="https://avatar.vercel.sh/shadcn1"
@@ -221,25 +221,27 @@ export default function Projects() {
       </CardHeader>
       <CardFooter className='flex justify-between'>
       {/* Página visualizar os orçamentos do projeto */}
-        <Dialog>
-      <form>
-        <DialogTrigger asChild>
-          <Button variant="outline" onClick={() => showBudgets(token, el.budgetIds[0])}>Ver orçamentos</Button>
-        </DialogTrigger>
-        <DialogContent className="sm:max-w-lg">
+      <Dialog>
+        <form>
+          <DialogTrigger asChild>
+            {/* Função do button onClick={() => showBudgets(token, el.budgetIds[0])} */}
+            <Button variant="outline" >Ver orçamentos</Button>
+          </DialogTrigger>
+          <DialogContent className="sm:max-w-lg">
 
-      {/* Form para criar orçamento */}
-          <StepBudget projectId={el.id} />
+        {/* Form para criar orçamento */}
+            <StepBudget projectId={el.id} />
 
-          <DialogFooter>
-            <DialogClose asChild>
-              <Button variant="outline">Fechar</Button>
-            </DialogClose>
-          </DialogFooter>
-        </DialogContent>
-      </form>
-    </Dialog>
-        {/* Abre o modal */}
+            <DialogFooter>
+              <DialogClose asChild>
+                <Button variant="outline">Fechar</Button>
+              </DialogClose>
+            </DialogFooter>
+          </DialogContent>
+        </form>
+      </Dialog>
+
+        {/* Deletar Projeto modal */}
           <Dialog>
           <DialogTrigger>
             <Trash2Icon size={20}  stroke='red' className='cursor-pointer' />

@@ -32,15 +32,22 @@ import {
     TableBody,
     TableCell
  } from '@/components/ui/table'
+import { Input } from '@/components/ui/input'
+import {  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+ } from '@/components/ui/select'
 export default function Budget({projectID}) {
+
     const token = localStorage.getItem('token')
     const [sinapiItens, setSinapiItens] = useState([])
     const [item, setItem] = useState('')
     const [page, setPage] = useState(0)
 
-    if(page < 0){
-        setPage(0)
-    }
+
 
     async function getAllData(){
             const getItens = await getSinapiItens(token,page,'')
@@ -62,11 +69,30 @@ export default function Budget({projectID}) {
         setSinapiItens(getItens.content)
         console.log(sinapiItens)
         
-    }   
+    }
+
+    async function filterItem(formData){
+        const filters = {
+          search: formData.get('nomeItem'),
+          uf: formData.get('uf'),
+          taxRelief: formData.get('tipo')
+        }
+
+        const getItens = await getSinapiItens(token,page,filters)
+        setSinapiItens(getItens.content)
+        console.log(getItens)
+        
+    }
+
+
+
+
+
+
   return (
     <>  
-        <div className='mx-10'>
-            <h1 className='text-3xl mb-10 mt-5'>Orçamento</h1>
+        <div>
+            <h1 className='text-3xl mb-10 mt-5 ml-5'>Orçamento</h1>
         {/* <Command className="screen rounded-lg border">
             <CommandInput placeholder="Type a command or search..." onValueChange={searchItem} />
             <CommandList>
@@ -91,10 +117,46 @@ export default function Budget({projectID}) {
                
             </CommandList>
         </Command> */}
-    <div className='max-h-[500px] overflow-y-auto border rounded-lg p-2'>
+        <div className='flex justify-center'>
+
+        
+      <form action={filterItem} className='w-screen flex flex-col gap-2 px-5'>
+        <Input  placeholder="Jordan Lee" name='nomeItem'/>
+        <div className='flex gap-2 '>
+
+        
+        <Select defaultValue="SP" name='uf'>
+          <SelectTrigger >
+            <SelectValue/>
+          </SelectTrigger>
+          <SelectContent>
+            <SelectGroup>
+              <SelectItem value="SP">SP</SelectItem>
+            </SelectGroup>
+          </SelectContent>
+        </Select>
+
+        <Select defaultValue=" " name='tipo'>
+          <SelectTrigger >
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+              <SelectGroup>
+                <SelectItem value=" " >Todos os Tipos</SelectItem>
+                <SelectItem value="ISD">ISD — Sem desoneração</SelectItem>
+                <SelectItem value="ICD">ICD — Composições</SelectItem>
+                <SelectItem value="ISE">ISE — Com encargos</SelectItem>
+              </SelectGroup>
+          </SelectContent>
+        </Select>
+    </div>
+        <Button>Pesquisar</Button>
+      </form>
+</div>
+    <div className='max-h-[500px] overflow-y-auto border rounded-lg p-2 mt-10'>
 
     
-        <Table  >
+        <Table >
   <TableHeader >
     <TableRow >
       <TableHead >Código</TableHead>
@@ -152,7 +214,7 @@ export default function Budget({projectID}) {
     <Pagination className='mt-5'>
             <PaginationContent>
                 <PaginationItem >
-                <PaginationPrevious onClick={() => setPage(prev => prev - 1)} />
+                <PaginationPrevious onClick={() => setPage(prev => Math.max(prev - 1, 0))} />
                 </PaginationItem>
                 
                 <PaginationItem >
