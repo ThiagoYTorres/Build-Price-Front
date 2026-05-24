@@ -16,7 +16,7 @@ import { AlertCircleIcon } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { useNavigate } from 'react-router-dom'
 import { cadastrarUser } from '@/services/api'
-
+import logo from '../assets/logo.png'
 function Teste() {
   const navigate = useNavigate()
     const [alert, setAlert] = React.useState(false)
@@ -60,9 +60,12 @@ function Teste() {
   return (
     <div className='flex justify-center items-center h-screen flex-col'>
       <Card className="w-full max-w-sm p-3 ">
+        <div className='flex justify-center '>
+          <img src={logo} alt="logo" className='w-20 mt-5'/>
+        </div>
         <form action={registerUser}>
         <CardHeader>
-          <CardTitle className="text-center text-xl font-bold pt-10">Build Price</CardTitle>
+          <CardTitle className="text-center text-xl font-bold">Build Price</CardTitle>
           <CardDescription className="text-center mb-4">Crie sua conta</CardDescription>
           <CardAction>
           </CardAction>

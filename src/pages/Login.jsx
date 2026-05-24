@@ -23,7 +23,7 @@ import { CheckCircle2Icon } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { loginUser } from '@/services/api'
 import { useNavigate } from 'react-router-dom'
-
+import logo from '../assets/logo.png'
 function Teste() {
     const [logado,setLogado] = React.useState(null)
     const [alert,setAlert] = React.useState(false)
@@ -66,12 +66,17 @@ function Teste() {
   return (
     <div className='flex justify-center items-center h-screen flex-col'>
     <Card className="w-full max-w-sm p-3 ">
+      <div className='flex justify-center '>
+         <img src={logo} alt="logo" className='w-20 mt-5'/>
+
+      </div>
         <form action={login}>
       <CardHeader>
-        <CardTitle className="text-center text-xl font-bold pt-10">Build Price</CardTitle>
-        <CardDescription className="text-center mb-7">
+        <CardTitle className="text-center text-xl font-bold ">Build Price</CardTitle>
+        <CardDescription className="text-center mb-12">
           Enter your email below to login to your account
         </CardDescription>
+        
         <CardAction>
         </CardAction>
       </CardHeader>

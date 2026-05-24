@@ -30,7 +30,7 @@ import {
 } from "@/components/ui/dialog"
 
 import { Input } from "@/components/ui/input"
-import { createProject, deleteProject, getBudgets, getProjects } from '@/services/api'
+import { createProject, deleteProject, getBudgets, getProjects, createBudget } from '@/services/api'
 import {
   Card,
   CardAction,
@@ -157,6 +157,46 @@ export default function Projects() {
     }
     getUserProjects(token)
   },[])
+// Enviar o body com os dados necessários para criar o orçamento
+
+// Lógica para o controle do Dialog formulário de criação de orçamento e 
+// do Dialog orçamentos do Projeto
+  const [selectedProject,setSelectedProject] = useState(null)
+
+  const [budgetPage, setBudgetPage] = useState(false)
+  const [projectBudgets, setProjectBudgets] = useState(false)
+  const [budgetID, setBudgetID] = useState('')
+
+  const [alertBudget, setAlertBudget] = useState(false)
+  useEffect( () => {
+      if(alertBudget){
+        const timer = setTimeout( () => setAlertBudget(false), 3000)
+        return () => clearTimeout(timer)  
+      }
+    },[alertBudget])
+
+  function openBudgetPage(){
+    (setTimeout(setBudgetPage(true)), 1000)
+    setProjectBudgets(false)
+  }
+  
+  async function getBudgetData(formData){
+      const budget = {
+            name: formData.get("name"),
+            bdi: formData.get("bdi"),
+            projectId: selectedProject,
+        }
+        console.log(budget)
+        try{
+            const getBudgetId = await createBudget(token, budget)
+            setBudgetID(getBudgetId)
+            setBudgetPage(false)
+            setAlertBudget(true)
+            
+        } catch(error) {
+          console.log(error)
+        }
+  }
 
   return (
     <>
@@ -178,19 +218,21 @@ export default function Projects() {
       {/* Conteúdo do form ( inputs ) */}
             
               { step === 1 && <StepClientes  nextS={getClientId} /> }
-              { step === 2 && <StepProjeto   nextS={getProjectId} clientId={formData.clientId}  /> }
+              { step === 2 && <StepProjeto setProjetos={setProjetos} setSteps={setSteps} clientId={formData.clientId} setOpen={setOpen} setAlert={setAlert} /> }
               {/* { step === 3 && <StepBudget    nextS={getBudgetId} /> } */}
               
       </DialogContent>
     </Dialog>
 
-    {/* Seção de Projetos */}
+    {/* -------------------------------Seção de Projetos----------------------------------------*/}
     {console.log(projetos)}
-    <section className='mt-6'>
-
+    
+    <section className='mt-6 '>
+      <div className='grid grid-cols-4 justify-items-center'>
+    {/* Loading Skeleton */}
       { loading ? 
-      [1,2,3].map( el => (
-        <Card key={el} className="w-full max-w-xs bg-gray-700 mb-2">
+      [1,2,3,4].map( el => (
+        <Card key={el} className="w-full max-w-sm bg-gray-500 mb-2">
       <CardHeader>
         <Skeleton className="h-4 w-2/3" />
         <Skeleton className="h-4 w-1/2" />
@@ -198,48 +240,33 @@ export default function Projects() {
       <CardContent>
         <Skeleton className="aspect-video w-full" />
       </CardContent>
-    </Card> 
-      )) : projetos.length > 0 ? projetos.map( el => ( 
-        <Card key={el.id} className="relative mx-auto w-full max-w-sm pt-0 mb-4">
+    </Card> )) : projetos.length > 0 ? projetos.map( el => ( 
+
+      <Card key={el.id} className="relative mx-auto w-full max-w-sm pt-0 mb-4">
       <div className="absolute inset-0 z-30 aspect-video bg-black/35" />
       <img
         src="https://avatar.vercel.sh/shadcn1"
         alt="Event cover"
         className="relative z-20 aspect-video w-full object-cover brightness-60 grayscale dark:brightness-40"
       />
-      <CardHeader>
-        <CardAction>
-          <Badge variant="default">{el.uf}</Badge>
-        </CardAction>
-        <CardTitle >{el.nameWork}</CardTitle>
-        <CardTitle className="text-sm font-normal ">
-          {el.clientName}
-        </CardTitle>
-        <CardDescription className='break-all'>
-          {el.description}
-        </CardDescription>
-      </CardHeader>
-      <CardFooter className='flex justify-between'>
-      {/* Página visualizar os orçamentos do projeto */}
-      <Dialog>
-        <form>
-          <DialogTrigger asChild>
-            {/* Função do button onClick={() => showBudgets(token, el.budgetIds[0])} */}
-            <Button variant="outline" >Ver orçamentos</Button>
-          </DialogTrigger>
-          <DialogContent className="sm:max-w-lg">
-
-        {/* Form para criar orçamento */}
-            <StepBudget projectId={el.id} />
-
-            <DialogFooter>
-              <DialogClose asChild>
-                <Button variant="outline">Fechar</Button>
-              </DialogClose>
-            </DialogFooter>
-          </DialogContent>
-        </form>
-      </Dialog>
+        <CardHeader>
+          <CardAction>
+            <Badge variant="default">{el.uf}</Badge>
+          </CardAction>
+          <CardTitle >{el.nameWork}</CardTitle>
+          <CardTitle className="text-sm font-normal ">
+            {el.clientName}
+          </CardTitle>
+          <CardDescription className='break-all'>
+            {el.description}
+          </CardDescription>
+        </CardHeader>
+          <CardFooter className='flex justify-between'>
+            <Button variant="outline" onClick={() => {
+              setSelectedProject(el.id)
+              setProjectBudgets(true)
+              }}>Ver orçamentos</Button>
+          
 
         {/* Deletar Projeto modal */}
           <Dialog>
@@ -262,7 +289,7 @@ export default function Projects() {
       </CardFooter>
     </Card>
       )) : <>
-       <Empty>
+      <Empty className='col-span-4'>
       <EmptyHeader>
         <EmptyMedia variant="icon">
           <FolderIcon />
@@ -276,24 +303,83 @@ export default function Projects() {
         <Button onClick={() => setOpen(true)}>Criar Projeto</Button>
       </EmptyContent>
     </Empty>
-    </> 
-    
-  }
+       
+    </> }
+  </div>
+  {/* Página para definir nome e BDI do orçamento */}
+    <Dialog open={budgetPage} onOpenChange={setBudgetPage}>
+
+      <DialogContent className="sm:max-w-lg py-10 px-10">
+          <DialogTitle className='text-center text-xl'>Dados do Orçamento</DialogTitle>
+              <DialogDescription className='text-center'>
+                  Preencha os campos para criar um orçamento.
+              </DialogDescription>
+
+          <form action={getBudgetData}>
+            <FieldGroup className='grid grid-cols-2'>
+                <Field>
+                    <FieldLabel htmlFor="fieldgroup-name">Nome</FieldLabel>
+                    <Input id="fieldgroup-name" placeholder="Orçamento Principal" name="name" required/>
+                </Field>
+
+                <Field>
+                    <FieldLabel htmlFor="fieldgroup-name">BDI</FieldLabel>
+                    <Input 
+                      id="fieldgroup-name" placeholder="25.5"
+                      name="bdi" type='number' step='0.1' />
+                    <FieldDescription>
+                    </FieldDescription>
+                </Field>
+
+                <Field orientation="horizontal" className='col-span-full flex justify-center'>
+                    <Button type="submit" className='cursor-pointer'>Fazer Orçamento</Button>
+                </Field>
+            </FieldGroup>
+          </form>
+
+      </DialogContent>
+    </Dialog>
+
+
+    <Dialog open={projectBudgets} onOpenChange={setProjectBudgets}>
+        <form>
+          {/* asChild DialogTrigger renderiza um button no html, para evitar erro utilizar asChild assim esse componente vira 1 button só */}
+            <DialogTrigger asChild>
+              {/* Função do button onClick={() => showBudgets(token, el.budgetIds[0])} */}
+            </DialogTrigger>
+          <DialogContent className="sm:max-w-lg">
+
+        {/* --------------------- Form para criar orçamento -------------------------- */}
+            <StepBudget projectId={selectedProject} openBudgetPage={openBudgetPage}  />
+
+          </DialogContent>
+        </form>
+      </Dialog>
     
  {console.log(alert)}
     </section>
       { alert ? <div className='flex justify-center'>
-      <Alert className="bg-green-600 fixed bottom-1 w-1/2 z-1000 animate-in fade-in slide-in-from-top-2 duration-500"  >
+      <Alert className="bg-green-600 fixed bottom-3 w-80 z-1000 animate-in fade-in slide-in-from-top-2 duration-500 border-none"  >
                <div className='flex justify-center gap-1 text-white'>
-                <CheckCircle2Icon size={17} />
-                <AlertTitle>Sucesso</AlertTitle>
+                <CheckCircle2Icon size={17} fill='white' color='green' />
+                
                 </div>
                 <AlertDescription className="text-white text-center">
                     Projeto criado com sucesso!
                 </AlertDescription>
             </Alert>
             </div> : null }
-
+      
+      { alertBudget ? <div className='flex justify-center'>
+      <Alert className="bg-green-600 fixed bottom-3 lg:w-1/6 w-60 z-1000 animate-in fade-in slide-in-from-top-2 duration-500 border-none"  >
+               <div className='flex justify-center gap-1 text-white'>
+                <CheckCircle2Icon size={17} fill='white' color='green'  />
+                </div>
+                <AlertDescription className="text-white text-center">
+                    Orçamento Criado!
+                </AlertDescription>
+            </Alert>
+            </div> : null }
 
     </main>
     </>

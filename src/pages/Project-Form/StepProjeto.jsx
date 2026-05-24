@@ -15,8 +15,8 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
-import { createProject } from '@/services/api'
-export default function StepProjeto({clientId, nextS}) {
+import { createProject, getProjects } from '@/services/api'
+export default function StepProjeto({clientId, setSteps, setOpen, setAlert,setProjetos}) {
   const token = localStorage.getItem('token')
   console.log(clientId)
           async function getProjectData(formData){
@@ -29,8 +29,12 @@ export default function StepProjeto({clientId, nextS}) {
           try{
               const projetoId = await createProject(token, projeto)
               console.log(projetoId)
-              nextS(projetoId)
-          } catch(error) {
+              setOpen(false) // Fecha o modal
+              setAlert(true) // Ativa o alert
+              setSteps(1) // Reseta para a primeira página, caso contrário ao criar o projeto o formulário carregaria na página 2
+              const projects = await getProjects(token)
+              setProjetos(projects)
+            } catch(error) {
               console.log(error)
           }
       }

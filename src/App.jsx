@@ -4,7 +4,7 @@ import Login from './pages/Login'
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import React from 'react'
 import Projects from './pages/Projects';
-import Budget from './pages/Project-Form/Budget';
+import Budget from './pages/Budget';
 
 function App() {
   return (
@@ -14,7 +14,7 @@ function App() {
           <Route path='/login' element={<Login/>}/>
           <Route path='/register' element={<Teste/>}/>
           <Route path='/projects' element={<Projects/>}/>
-          <Route path='/budget' element={<Budget/>}/>
+          <Route path='/budget/:budgetId' element={<Budget/>}/>
           <Route path="/" element={<Teste />} />
         </Routes>
       </BrowserRouter>

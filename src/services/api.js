@@ -119,7 +119,7 @@ export async function getBudgetData(token, budgetId){
         throw new Error("Erro ao buscar dados do orçamento")
     }
     const budget = await resp.json()
-    console.log(budget)
+    return budget
 }
 
 
@@ -138,9 +138,9 @@ export async function deleteProject(token, projectId) {
 //Listar Itens
 export async function getSinapiItens(token,page,filters){
     const params = new URLSearchParams(filters)
-    console.log(`${BASE_URL}/sinapi/items?${page}&${params}`)
+    console.log(`${BASE_URL}/sinapi/items?page=${page}&${params}`)
 
-    const resp = await fetch(`${BASE_URL}/sinapi/items?page=${page}&${params}`, {
+    const resp = await fetch(`${BASE_URL}/sinapi/items?&page=${page}&${params}`, {
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
     })
     if(!resp.ok){
@@ -150,4 +150,21 @@ export async function getSinapiItens(token,page,filters){
     }
     const itens = await resp.json()
     return itens
+}
+
+export async function addSinapiItens(token,itemId,budgetId){
+    console.log(`${BASE_URL}/sinapi/projects/${itemId}/items`)
+
+    const resp = await fetch(`${BASE_URL}/projects/${itemId}/items`, {
+        method: 'POST',
+        body: JSON.stringify(budgetId),
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+    })
+    if(!resp.ok){
+        const erro = await resp.json()
+        console.log(erro)
+        throw new Error("Erro ao adicionar item")
+    }
+    const itens = await resp.json()
+    console.log(itens)
 }
