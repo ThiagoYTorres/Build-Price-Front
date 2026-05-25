@@ -246,13 +246,20 @@ export default function Budget({ projectID }) {
                       "border",
                       item.classification === "MATERIAL" && "bg-orange-100 text-orange-700 border-orange-300",
                       item.classification === "MAO DE OBRA" && "bg-green-100 text-green-700 border-green-300",
-                      item.classification === "SERVIÇOS" && "bg-purple-100 text-purple-700 border-purple-300"
+                      item.classification === "SERVIÇOS" && "bg-purple-100 text-purple-700 border-purple-300",
+                      item.classification === "ENCARGOS COMPLEMENTARES" && "bg-blue-100 text-blue-700 border-blue-300"
                     )}>{item.classification}</Badge>
                   </TableCell>
                   <TableCell>{item.unit}</TableCell>
                   <TableCell>{item.uf}</TableCell>
                   <TableCell>
-                    <Badge className='bg-blue-950 text-blue-300'>{item.taxRelief}</Badge>
+                    <Badge className={cn(
+                      item.taxRelief === "ISD" && 'bg-blue-950 text-white',
+                      item.taxRelief === "ICD" && 'bg-orange-700 text-white',
+                      item.taxRelief === "ISE" && 'bg-purple-800 text-white'
+                    )}
+                    
+                    >{item.taxRelief}</Badge>
                   </TableCell>
                   <TableCell>
                       <Badge className=' bg-green-900 text-green-300 rounded border-green-400'>
@@ -261,7 +268,7 @@ export default function Budget({ projectID }) {
                   </TableCell>
                   <TableCell>
                     {/* Passa o item inteiro para ter acesso à descrição no dialog */}
-                    <Button size="sm" onClick={() => handleOpenDialog(item)}>Adicionar</Button>
+                    <Button className='cursor-pointer' size="sm" onClick={() => handleOpenDialog(item)}>Adicionar</Button>
                   </TableCell>
                 </TableRow>
               ))}

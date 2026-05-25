@@ -74,7 +74,7 @@ function Teste() {
       <CardHeader>
         <CardTitle className="text-center text-xl font-bold ">Build Price</CardTitle>
         <CardDescription className="text-center mb-12">
-          Enter your email below to login to your account
+          Coloque seu email e senha abaixo para fazer o login
         </CardDescription>
         
         <CardAction>
