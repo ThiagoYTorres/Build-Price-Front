@@ -119,7 +119,7 @@ export default function Budget({ projectID }) {
 
   return (
     <>
-      <div className='lg:px-70 animate-in fade-in slide-in-from-bottom-4 duration-500 delay-0'>
+      <div className='lg:mx-[10%] animate-in fade-in slide-in-from-bottom-4 duration-500 delay-0'>
         <div className='flex mb-10 mt-6 ml-3 flex-col gap-3  '>
            <h1 className='text-3xl lg:text-4xl font-medium'>{budgetData?.name || 'Orçamento'}</h1>
            <div className='text-[12px] flex items-center  gap-2 text-sm bg-gray-300 text-gray-800 py-1 px-2 w-fit rounded-md'>
@@ -266,9 +266,12 @@ export default function Budget({ projectID }) {
                         {Number(item.price).toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}
                       </Badge>
                   </TableCell>
-                  <TableCell>
+                  <TableCell className='relative'>
                     {/* Passa o item inteiro para ter acesso à descrição no dialog */}
-                    <Button className='cursor-pointer' size="sm" onClick={() => handleOpenDialog(item)}>Adicionar</Button>
+                    <Button className='cursor-pointer' size="sm" onClick={() => handleOpenDialog(item)}>
+                      <span className="hidden sm:inline">Adicionar</span>
+                      <span className="sm:hidden ">+</span>
+                    </Button>
                   </TableCell>
                 </TableRow>
               ))}
